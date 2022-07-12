@@ -37,7 +37,7 @@ const PostModal = ({ postModal, comments, likes }) => {
       <FontAwesomeIcon
         icon={faXmarkCircle}
         className={styles.cancel}
-        onClick={() => router.push('/')}
+        onClick={() => router.back()}
       />
       <div className={styles.box}>
         <section className={styles.left}>
