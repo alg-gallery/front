@@ -53,7 +53,9 @@
   margin: 0;
   width: 100%;
   height: 88%;
+  font-size: 16px;
   overflow-y: scroll;
+  line-height: 20px;
 }
 
 .codes::-webkit-scrollbar {
@@ -103,8 +105,10 @@
 .postTime {
   display: flex;
   justify-content: flex-end;
-  padding-right: 3rem;
+  padding-right: 60px;
   width: 100%;
+  margin-bottom: 10px;
+  color: #00000080;
 }
 
 .text {
@@ -121,6 +125,7 @@
 
 .text p {
   font-weight: 400;
+  line-height: 30px;
 }
 
 .comments {

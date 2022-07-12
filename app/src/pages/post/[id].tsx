@@ -63,7 +63,8 @@ const Post = () => {
   useEffect(() => {
     item();
     comment();
-  }, [item, comment]);
+    like();
+  }, [item, comment, like]);
 
   return (
     <div className={styles.box}>
