@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './post_modal.module.css';
 import Highlight from 'react-highlight';
 import Moment from 'react-moment';
@@ -11,153 +11,76 @@ import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 
-
 const PostModal = ({ postModal, comments, likes }) => {
   const router = useRouter();
-  const commentLength = Object.keys(comments).length;
-  const [likeCount, setLikeCount] = useState(likes?.count);
 
-  const onLike = (count) => {
-    setLikeCount(count);
-  };
+  const commentLength = Object.keys(comments).length;
 
   const { id } = router.query;
 
-  const onClickDeleteBtn = () => {
-    fetch(`${process.env.REACT_APP_ALG_SERVER}/post/${id}`, {
-      // credentials: "include",
-      method: "DELETE",
+  const onLike = e => {
+    fetch(`${process.env.REACT_APP_ALG_SERVER}/like/${id}`, {
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
-      }
-    })
-      .then(response => {
-        if (response.status == 200) {
-          alert('삭제가 완료되었습니다.');
-          router.push('/');
-        }
-      })
-      .catch(error => console.log('error', error));
-  }
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    }).then(res => {});
+  };
 
-  if (localStorage.getItem('admin') === 'true') {
-    return (
-      <motion.div
-        className={styles.post}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ ease: 'easeIn', duration: 0.7 }}
-      >
-        <FontAwesomeIcon
-          icon={faXmarkCircle}
-          className={styles.cancel}
-          onClick={() => router.push('/')}
-        />
-        <div className={styles.box}>
-          <section className={styles.left}>
-            <ul className={styles.tags}>
-              <li># {postModal?.tag1}</li>
-              <li># {postModal?.tag2}</li>
-              <li># {postModal?.tag3}</li>
-            </ul>
-            <div className={styles.codes}>
-              <Highlight
-                language={postModal?.tag1}
-                children={postModal?.algCode}
-              />
+  return (
+    <motion.div
+      className={styles.post}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ ease: 'easeIn', duration: 0.7 }}
+    >
+      <FontAwesomeIcon
+        icon={faXmarkCircle}
+        className={styles.cancel}
+        onClick={() => router.push('/')}
+      />
+      <div className={styles.box}>
+        <section className={styles.left}>
+          <ul className={styles.tags}>
+            <li># {postModal?.tag1}</li>
+            <li># {postModal?.tag2}</li>
+            <li># {postModal?.tag3}</li>
+          </ul>
+          <div className={styles.codes}>
+            <Highlight language={postModal?.tag1}>
+              {postModal?.algCode}
+            </Highlight>
+          </div>
+        </section>
+        <section className={styles.right}>
+          <div className={styles.profile}>
+            <div className={styles.profile__img}></div>
+            <p className={styles.name}>{postModal?.users.userid}</p>
+          </div>
+          <div className={styles.postTime}>
+            <Moment fromNow>{postModal?.post_date}</Moment>
+          </div>
+          <div className={styles.text}>
+            <p>{postModal?.text}</p>
+          </div>
+          <div className={styles.comments}>
+            <div className={styles.commentsHeader}>
+              <p className={styles.commentTitle}>댓글</p>
+              <p className={styles.commentNum}>{commentLength}</p>
+              <Like onLike={onLike} />
+              <p className={styles.likeNum}>{likes?.count}</p>
             </div>
-            <button onClick={onClickDeleteBtn}>게시물 삭제</button>
-          </section>
-          <section className={styles.right}>
-            <div className={styles.profile}>
-              <div className={styles.profile__img}></div>
-              <p className={styles.name}>{postModal?.users.userid}</p>
+            <div className={styles.commentsBox}>
+              <CommentList comments={comments} />
             </div>
-            <div className={styles.postTime}>
-              <Moment fromNow>{postModal?.post_date}</Moment>
+            <div className={styles.commentsInput}>
+              <CommentInput postid={postModal?.postid} />
             </div>
-            <div className={styles.text}>
-              <p>{postModal?.text}</p>
-            </div>
-            <div className={styles.comments}>
-              <div className={styles.commentsHeader}>
-                <p className={styles.commentTitle}>댓글</p>
-                <p className={styles.commentNum}>{commentLength}</p>
-                <Like onLike={onLike} />
-                <p className={styles.likeNum}>{likeCount}</p>
-              </div>
-              <div className={styles.commentsBox}>
-                <CommentList comments={comments} />
-              </div>
-              <div className={styles.commentsInput}>
-                <CommentInput postid={postModal?.postid} />
-              </div>
-            </div>
-          </section>
-        </div>
-      </motion.div>
-    );
-  }
-  else {
-    return (
-      <motion.div
-        className={styles.post}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ ease: 'easeIn', duration: 0.7 }}
-      >
-        <FontAwesomeIcon
-          icon={faXmarkCircle}
-          className={styles.cancel}
-          onClick={() => router.back()}
-        />
-        <div className={styles.box}>
-          <section className={styles.left}>
-            <ul className={styles.tags}>
-              <li># {postModal?.tag1}</li>
-              <li># {postModal?.tag2}</li>
-              <li># {postModal?.tag3}</li>
-            </ul>
-            <div className={styles.codes}>
-              <Highlight
-                language={postModal?.tag1}
-                children={postModal?.algCode}
-              />
-            </div>
-          </section>
-          <section className={styles.right}>
-            <div className={styles.profile}>
-              <div className={styles.profile__img}></div>
-              <p className={styles.name}>{postModal?.users.userid}</p>
-            </div>
-            <div className={styles.postTime}>
-              <Moment fromNow>{postModal?.post_date}</Moment>
-            </div>
-            <div className={styles.text}>
-              <p>{postModal?.text}</p>
-            </div>
-            <div className={styles.comments}>
-              <div className={styles.commentsHeader}>
-                <p className={styles.commentTitle}>댓글</p>
-                <p className={styles.commentNum}>{commentLength}</p>
-                <Like onLike={onLike} />
-                <p className={styles.likeNum}>{likeCount}</p>
-              </div>
-              <div className={styles.commentsBox}>
-                <CommentList comments={comments} />
-              </div>
-              <div className={styles.commentsInput}>
-                <CommentInput postid={postModal?.postid} />
-              </div>
-            </div>
-          </section>
-        </div>
-      </motion.div>
-    );
-  }
+          </div>
+        </section>
+      </div>
+    </motion.div>
+  );
 };
 
 export default PostModal;
